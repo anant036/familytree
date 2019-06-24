@@ -5,6 +5,7 @@ After this we can get relationship mapping graph for a person.
 
 ## How to run on local environment:
 - This is java project which is using Maven, Java and maven should be present on System.
+- Clone repository to your system.
 - Go to `familytree` directory.
 - Execute `mvn clean compile`
 - Execute `mvn spring-boot:run`
