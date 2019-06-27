@@ -3,20 +3,14 @@ package com.test.familytree.service;
 import static com.test.familytree.util.Constant.PATH_DELIMITER;
 
 import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxCellRenderer;
-import com.mxgraph.view.mxGraph;
 import com.test.familytree.model.RelationshipEdge;
 import com.test.familytree.model.Relative;
 import java.awt.Color;
-import java.awt.HeadlessException;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Set;
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
 import org.jgrapht.Graph;
 import org.jgrapht.ext.JGraphXAdapter;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -33,12 +27,12 @@ public class ResponseVisualizationService {
 
     try{
       Graph<String, DefaultEdge> graph
-          = new DefaultDirectedGraph<>(DefaultEdge.class);
-      graph.addVertex(personName);
+          = generateRelationGraph(personName, relatives, new DefaultDirectedGraph<>(DefaultEdge.class));
+      /*graph.addVertex(personName);
       for(Relative relative: relatives) {
         graph.addVertex(relative.getPerson().getName());
         graph.addEdge(personName, relative.getPerson().getName(), new RelationshipEdge(relative.getRelationship().name()));
-      }
+      }*/
 
       JGraphXAdapter<String, DefaultEdge> graphAdapter = new JGraphXAdapter<>(graph);
       mxCircleLayout layout = new mxCircleLayout(graphAdapter);
@@ -56,4 +50,23 @@ public class ResponseVisualizationService {
 
   }
 
+  private Graph<String, DefaultEdge> generateRelationGraph(String personName, Set<Relative> relatives, Graph<String, DefaultEdge> graph) {
+
+
+    if(!graph.containsVertex(personName)) {
+      graph.addVertex(personName);
+    }
+    for(Relative relative: relatives) {
+      if(graph.containsEdge(personName, relative.getPerson().getName())) {
+        continue;
+      }
+      graph.addVertex(relative.getPerson().getName());
+      graph.addEdge(personName, relative.getPerson().getName(), new RelationshipEdge(relative.getRelationship().name()));
+      generateRelationGraph(relative.getPerson().getName(), relative.getPerson().getRelatives(), graph);
+    }
+    return graph;
+
+  }
+
 }
+

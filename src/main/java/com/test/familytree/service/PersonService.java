@@ -52,12 +52,6 @@ public class PersonService {
     }
     validateRelationshipIsNotAlreadyPresent(person, relativePerson);
     personData.addRelationToPerson(person, relationship, relativePerson);
-    if(relationship == Relationship.SPOUSE || relationship == Relationship.SIBLING) {
-      personData.addRelationToPerson(relativePerson, relationship, person);
-    }
-    else {
-      personData.addRelationToPerson(relativePerson, Relationship.OTHER, person);
-    }
     return person;
   }
 
